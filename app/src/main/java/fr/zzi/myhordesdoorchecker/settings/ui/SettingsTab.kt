@@ -21,8 +21,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SettingsTab(settingsViewModel: SettingsViewModel) {
-    val init = remember { settingsViewModel.loadInitialState() }
-
     val username = settingsViewModel.getUsername().observeAsState("").value
     val userkey = settingsViewModel.getUserkey().observeAsState("").value
     Column(modifier = Modifier.padding(16.dp)) {

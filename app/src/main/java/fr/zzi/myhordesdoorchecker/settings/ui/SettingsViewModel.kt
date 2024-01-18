@@ -1,5 +1,6 @@
 package fr.zzi.myhordesdoorchecker.settings.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,19 +19,7 @@ class SettingsViewModel : ViewModel() {
     private val userkey = MutableLiveData("")
     fun getUserkey(): LiveData<String> = userkey
 
-    fun onUserkeyFilled(userkey: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val user = MeDataSource.getUser(userkey)
-            SettingsRepository.saveUserId(user.id)
-            SettingsRepository.saveUserName(user.name)
-
-            withContext(Dispatchers.Main) {
-                username.value = user.name
-            }
-        }
-    }
-
-    fun loadInitialState(): Boolean {
+    init {
         viewModelScope.launch(Dispatchers.IO) {
             val userkeyResult = SettingsRepository.getUserKey()
             val usernameResult = SettingsRepository.getUserName()
@@ -39,6 +28,22 @@ class SettingsViewModel : ViewModel() {
                 username.value = usernameResult
             }
         }
-        return true
+    }
+
+
+    fun onUserkeyFilled(userkey: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val user = MeDataSource.getUser(userkey)
+                SettingsRepository.saveUserId(user.id)
+                SettingsRepository.saveUserName(user.name)
+
+                withContext(Dispatchers.Main) {
+                    username.value = user.name
+                }
+            } catch (e: Exception) {
+                Log.e("", "Unable to fetch user info " + e.message)
+            }
+        }
     }
 }
