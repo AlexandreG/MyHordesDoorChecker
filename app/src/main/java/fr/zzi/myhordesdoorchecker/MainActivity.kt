@@ -8,12 +8,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
+import fr.zzi.myhordesdoorchecker.door.ui.DoorViewModel
+import fr.zzi.myhordesdoorchecker.settings.ui.SettingsViewModel
 import fr.zzi.myhordesdoorchecker.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val doorViewModel by lazy { ViewModelProvider(this)[DoorViewModel::class.java] }
+    private val settingsViewModel by lazy { ViewModelProvider(this)[SettingsViewModel::class.java] }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +42,10 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     bottomBar = { BottomNavigationBar(navController = navController) }
                 ) { it ->
-                    NavigationHost(navController = navController)
+                    NavigationHost(
+                        navController = navController,
+                        remember { doorViewModel },
+                        remember { settingsViewModel })
                 }
             }
         }

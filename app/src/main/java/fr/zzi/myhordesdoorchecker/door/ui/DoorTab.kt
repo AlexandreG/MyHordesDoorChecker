@@ -12,7 +12,10 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun DoorTab(open: Boolean?, lastCheckTime: Long) {
+fun DoorTab(doorViewModel: DoorViewModel) {
+
+    val doorOpen = doorViewModel.areDoorOpen()
+    val lastCheckTime = doorViewModel.getLastCheckTime()
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
             text = "Door Checker",
@@ -30,13 +33,13 @@ fun DoorTab(open: Boolean?, lastCheckTime: Long) {
             style = MaterialTheme.typography.headlineMedium
         )
 
-        if (open == null) {
+        if (doorOpen == null) {
             Button(
                 onClick = {}
             ) {
                 Text(text = "Clickez pour vérifier")
             }
-        } else if (open) {
+        } else if (doorOpen) {
             Text(
                 text = "OUVERTES",
                 color = MaterialTheme.colorScheme.error,

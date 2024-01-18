@@ -17,8 +17,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import fr.zzi.myhordesdoorchecker.door.ui.DoorTab
+import fr.zzi.myhordesdoorchecker.door.ui.DoorViewModel
 import fr.zzi.myhordesdoorchecker.links.LinksTab
-import fr.zzi.myhordesdoorchecker.settings.SettingsTab
+import fr.zzi.myhordesdoorchecker.settings.ui.SettingsTab
+import fr.zzi.myhordesdoorchecker.settings.ui.SettingsViewModel
 
 enum class BottomNavItem(val route: String, val icon: ImageVector, val label: String) {
     Home("home", Icons.Default.Home, "Home"),
@@ -27,16 +29,20 @@ enum class BottomNavItem(val route: String, val icon: ImageVector, val label: St
 }
 
 @Composable
-fun NavigationHost(navController: NavHostController) {
+fun NavigationHost(
+    navController: NavHostController,
+    doorViewModel: DoorViewModel,
+    settingsViewModel: SettingsViewModel
+) {
     NavHost(navController, startDestination = BottomNavItem.Home.route) {
         composable(BottomNavItem.Home.route) {
-            DoorTab(null, System.currentTimeMillis())
+            DoorTab(doorViewModel)
         }
         composable(BottomNavItem.Search.route) {
             LinksTab()
         }
         composable(BottomNavItem.Profile.route) {
-            SettingsTab()
+            SettingsTab(settingsViewModel)
         }
     }
 }

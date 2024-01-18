@@ -56,4 +56,12 @@ class DoorViewModel : ViewModel() {
 //    }
 
     }
+
+    fun areDoorOpen(): Boolean? {
+        return null
+    }
+
+    fun getLastCheckTime(): Long {
+        return System.currentTimeMillis() - 300000
+    }
 }
