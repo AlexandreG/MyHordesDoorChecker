@@ -27,7 +27,7 @@ fun SettingsTab(settingsViewModel: SettingsViewModel) {
         SettingsTitle()
         ConnectedStatus(username)
         UserKeyRow(userkey) { text ->
-            settingsViewModel.onUserkeyFilled(text)
+            settingsViewModel.onSendUserkey(text)
         }
     }
 }

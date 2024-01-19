@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import fr.zzi.myhordesdoorchecker.common.RestClient
 import fr.zzi.myhordesdoorchecker.settings.data.MeDataSource
 import fr.zzi.myhordesdoorchecker.settings.data.SettingsRepository
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +22,7 @@ class SettingsViewModel : ViewModel() {
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            val userkeyResult = SettingsRepository.getUserKey()
+            val userkeyResult = SettingsRepository.getUserKey() ?: RestClient.USER_KEY
             val usernameResult = SettingsRepository.getUserName()
             withContext(Dispatchers.Main) {
                 userkey.value = userkeyResult
@@ -30,19 +31,22 @@ class SettingsViewModel : ViewModel() {
         }
     }
 
-
-    fun onUserkeyFilled(userkey: String) {
+    fun onSendUserkey(userkey: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val user = MeDataSource.getUser(userkey)
-                SettingsRepository.saveUserId(user.id)
-                SettingsRepository.saveUserName(user.name)
-
-                withContext(Dispatchers.Main) {
-                    username.value = user.name
-                }
+            SettingsRepository.saveUserKey(userkey)
+            val user = try {
+                MeDataSource.getUser(userkey)
             } catch (e: Exception) {
+                //TODO ERROR HANDLING
+
                 Log.e("", "Unable to fetch user info " + e.message)
+                null
+            }
+            SettingsRepository.saveUserId(user?.id ?: "")
+            SettingsRepository.saveUserName(user?.name ?: "")
+
+            withContext(Dispatchers.Main) {
+                username.value = user?.name ?: ""
             }
         }
     }

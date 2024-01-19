@@ -37,9 +37,10 @@ object RestClient {
             }
         }
 
+        //TODO MOVE KEYS TO LOCAL.PROPERTIES
         override fun loadForRequest(url: HttpUrl): List<Cookie> {
             return listOf(
-                Cookie.Builder().name("myhordes_session_id").value("j697ar99u0q5m9giu0lt59fpnv")
+                Cookie.Builder().name("myhordes_session_id").value("s1rr4f1qhg424met3s02cvb94h")
                     .domain("myhordes.eu")
                     .build(),
                 Cookie.Builder().name("myhordes_remember_me")
