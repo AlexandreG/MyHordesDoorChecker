@@ -23,9 +23,9 @@ import fr.zzi.myhordesdoorchecker.settings.ui.SettingsTab
 import fr.zzi.myhordesdoorchecker.settings.ui.SettingsViewModel
 
 enum class BottomNavItem(val route: String, val icon: ImageVector, val label: String) {
-    Home("home", Icons.Default.Home, "Home"),
-    Search("links", Icons.Default.WebAsset, "Links"),
-    Profile("settings", Icons.Default.Settings, "Settings");
+    Home("home", Icons.Default.Home, "Accueil"),
+    Search("links", Icons.Default.WebAsset, "Liens"),
+    Profile("settings", Icons.Default.Settings, "Paramètres");
 }
 
 @Composable

@@ -12,16 +12,16 @@ object UserDataSource {
         retrofitService = RestClient.createService(RetrofitService::class.java)
     }
 
-    suspend fun getUser(userId: String): UserResponse {
-        return retrofitService.getUser(userId)
+    suspend fun getUser(userId: String, userkey: String): UserResponse {
+        return retrofitService.getUser(userId, userkey)
     }
 
     interface RetrofitService {
         @GET("user")
         suspend fun getUser(
             @Query("id") userId: String,
+            @Query("userkey") userKey: String,
             @Query("appkey") appKey: String = RestClient.APP_KEY,
-            @Query("userkey") userKey: String = RestClient.USER_KEY,
             @Query("fields") field: String = "map"
         ): UserResponse
     }

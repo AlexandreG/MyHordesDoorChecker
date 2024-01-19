@@ -16,6 +16,10 @@ object SharedPrefUtils {
         Application.context.getSharedPreferences(fileName, Context.MODE_PRIVATE)
             .getInt(key, 0)
 
+    fun getLong(key: String) =
+        Application.context.getSharedPreferences(fileName, Context.MODE_PRIVATE)
+            .getLong(key, 0L)
+
     fun getString(key: String) =
         Application.context.getSharedPreferences(fileName, Context.MODE_PRIVATE)
             .getString(key, null)
@@ -28,6 +32,12 @@ object SharedPrefUtils {
     fun saveInt(key: String, value: Int) {
         Application.context.getSharedPreferences(fileName, Context.MODE_PRIVATE).edit {
             putInt(key, value)
+        }
+    }
+
+    fun saveLong(key: String, value: Long) {
+        Application.context.getSharedPreferences(fileName, Context.MODE_PRIVATE).edit {
+            putLong(key, value)
         }
     }
 

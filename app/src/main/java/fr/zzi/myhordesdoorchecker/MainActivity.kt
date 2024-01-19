@@ -3,7 +3,9 @@ package fr.zzi.myhordesdoorchecker
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -32,7 +34,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun MainActivityUI() {
         AppTheme {
-            // A surface container using the 'background' color from the theme
+
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
@@ -40,12 +42,14 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 Scaffold(
                     bottomBar = { BottomNavigationBar(navController = navController) }
-                ) { it ->
-                    NavigationHost(
-                        navController = navController,
-                        doorViewModel,
-                        settingsViewModel
-                    )
+                ) { innerPadding ->
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        NavigationHost(
+                            navController = navController,
+                            doorViewModel,
+                            settingsViewModel
+                        )
+                    }
                 }
             }
         }

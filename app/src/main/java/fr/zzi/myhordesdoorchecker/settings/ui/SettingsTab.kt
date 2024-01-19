@@ -35,7 +35,7 @@ fun SettingsTab(settingsViewModel: SettingsViewModel) {
 @Composable
 fun SettingsTitle() {
     Text(
-        text = "Settings",
+        text = "Paramètres",
         style = MaterialTheme.typography.displayLarge,
         modifier = Modifier.padding(16.dp)
     )

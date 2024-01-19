@@ -1,67 +1,63 @@
 package fr.zzi.myhordesdoorchecker.door.ui
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import fr.zzi.myhordesdoorchecker.door.data.DoorRepository
+import fr.zzi.myhordesdoorchecker.settings.data.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DoorViewModel : ViewModel() {
 
-    companion object {
-        const val CITY_LATITUDE = 47.2260781
-        const val CITY_LONGITUDE = -1.6218336
-        const val NB_FORECAST_DAY = 5
-    }
+    private val doorOpen = MutableLiveData<Boolean?>()
+    fun areDoorOpen(): LiveData<Boolean?> = doorOpen
 
-    fun totot() {
+    private val userkeyFilled = MutableLiveData(false)
+    fun isUserkeyFilled(): LiveData<Boolean> = userkeyFilled
+
+    private val lastCheckTime = MutableLiveData<Long?>()
+    fun getLastCheckTime(): LiveData<Long?> = lastCheckTime
+
+    init {
         viewModelScope.launch(Dispatchers.IO) {
-            val open = DoorRepository.isDoorOpen()
-            Log.e("", "uiehfse open : $open")
+            val userId = SettingsRepository.getUserId()
+            val lastDoorStatus = DoorRepository.getLastDoorStatus()
+            val lastRequestTime = DoorRepository.getLastRequestTime()
+
+            withContext(Dispatchers.Main) {
+                userkeyFilled.value = userId != null
+                doorOpen.value = lastDoorStatus
+                lastCheckTime.value = lastRequestTime
+            }
+
         }
-
-//    fun getForecast(): LiveData<List<DayItemData>> {
-//        val result = MutableLiveData<List<DayItemData>>()
-//
-//        viewModelScope.launch(Dispatchers.IO) {
-//            val forecastResult = WeatherRepository.getForecast(
-//                CITY_LATITUDE,
-//                CITY_LONGITUDE,
-//                NB_FORECAST_DAY
-//            )
-//            val uiItemList = forecastResult.list.map {
-//                DayItemData(
-//                    formatDate(it.dt),
-//                    buildImageURL(it.weather.first().icon),
-//                    it.weather.first().main,
-//                    it.weather.first().description
-//                )
-//            }
-//            result.postValue(uiItemList)
-//        }
-//
-//        return result
-//    }
-//
-//    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-//    fun formatDate(timestamp: Long): String {
-//        val date = Date(timestamp * 1000)
-//        return SimpleDateFormat("dd/MM").format(date)
-//    }
-//
-//    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-//    fun buildImageURL(iconName: String): String {
-//        return "https://openweathermap.org/img/w/$iconName.png"
-//    }
-
     }
 
-    fun areDoorOpen(): Boolean? {
-        return null
-    }
+    fun onCheckDoorStatus() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val userkey = SettingsRepository.getUserKey()
+                val userId = SettingsRepository.getUserId()
+                val mapId = DoorRepository.fetchMapId(userId!!, userkey!!)
+                val doorOpen = DoorRepository.fetchIsDoorOpen(mapId, userkey)
+                val lastRequest = System.currentTimeMillis()
 
-    fun getLastCheckTime(): Long {
-        return System.currentTimeMillis() - 300000
+                DoorRepository.saveLastDoorStatus(doorOpen)
+                DoorRepository.saveLastRequestTime(lastRequest)
+
+                withContext(Dispatchers.Main) {
+                    userkeyFilled.value = true
+                    this@DoorViewModel.doorOpen.value = doorOpen
+                    lastCheckTime.value = lastRequest
+                }
+            } catch (e: Exception) {
+                //TODO ERROR HANDLING
+                Log.e("", "Unable to fetch map info " + e.message)
+            }
+        }
     }
 }

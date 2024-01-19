@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 fun LinksTab() {
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
-            text = "Links",
+            text = "Liens",
             style = MaterialTheme.typography.displayLarge
         )
 
